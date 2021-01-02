@@ -39,6 +39,15 @@ namespace TCGShop.Controllers
             {
                 Response.Redirect("/Home/Permissions");
             }
+            
+            if (!(User.Identity.GetUserId() == "e63830c1-9176-4b57-9946-c91277275e40"))
+            {
+                ViewBag.IsAdmin = false;
+            }
+            else
+            {
+                ViewBag.IsAdmin = true;
+            }
 
             var userId = User.Identity.GetUserId();
 

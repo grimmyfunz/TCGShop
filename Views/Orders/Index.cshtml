@@ -8,7 +8,13 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    @{
+        if (ViewBag.IsAdmin)
+        {
+            <a asp-action="Create">Create New</a>
+        }
+    }
+    
 </p>
 <table class="table">
     <thead>
@@ -25,7 +31,12 @@
             <th>
                 @Html.DisplayNameFor(model => model.ID_User)
             </th>
-            <th></th>
+            @{
+                if (ViewBag.IsAdmin)
+                {
+                    <th></th>
+                }
+            }
         </tr>
     </thead>
     <tbody>
@@ -43,11 +54,17 @@
             <td>
                 @Html.DisplayFor(modelItem => item.ID_User)
             </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
-            </td>
+            @{
+                if (ViewBag.IsAdmin)
+                {
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                    </td>
+                }
+            }
+
         </tr>
 }
     </tbody>

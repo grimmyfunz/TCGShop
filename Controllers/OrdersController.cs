@@ -27,8 +27,10 @@ namespace TCGShop.Controllers
             {
                 //Response.Redirect("/Home/Permissions");
                 string id = User.Identity.GetUserId();
+                ViewBag.IsAdmin = false;
                 return View(_context.Order.Where(m => m.ID_User == id));
             }
+            ViewBag.IsAdmin = true;
             return View(await _context.Order.ToListAsync());
         }
 
