@@ -11,16 +11,16 @@ namespace TCGShop.Models
 
         public DateTime CreatedTime { get; set; }
 
+        public int ID_Cart { get; set; }
+
         public Cart Cart { get; set; }
 
         public int ID_DeliveryType { get; set; }
 
         public DeliveryType DeliveryType { get; set; }
 
-        public string FirstName { get; set; }
+        public string Username { get; set; }
 
-        public string LastName { get; set; }
-
-        public string Adress { get; set; }
+        public string ID_User { get; set; }
     }
 }

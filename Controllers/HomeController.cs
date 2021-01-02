@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using TCGShop.Models;
+
+//ADMIN USERNAME: admin@admin.com
+//PASSWORD: !@#123Qq
 
 namespace TCGShop.Controllers
 {
@@ -24,6 +28,11 @@ namespace TCGShop.Controllers
         }
 
         public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        public IActionResult Permissions()
         {
             return View();
         }

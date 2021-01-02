@@ -11,16 +11,16 @@ using TCGShop.Models;
 
 namespace TCGShop.Controllers
 {
-    public class ProductsController : Controller
+    public class DeliveryTypesController : Controller
     {
         private readonly EntityContext _context;
 
-        public ProductsController(EntityContext context)
+        public DeliveryTypesController(EntityContext context)
         {
             _context = context;
         }
 
-        // GET: Products
+        // GET: DeliveryTypes
         public async Task<IActionResult> Index()
         {
             if (!(User.Identity.GetUserId() == "e63830c1-9176-4b57-9946-c91277275e40"))
@@ -28,59 +28,10 @@ namespace TCGShop.Controllers
                 Response.Redirect("/Home/Permissions");
             }
 
-            return View(await _context.Products.ToListAsync());
+            return View(await _context.DeliveryType.ToListAsync());
         }
 
-        public async Task<IActionResult> Shop()
-        {
-            return View(await _context.Products.ToListAsync());
-        }
-
-        public async Task<IActionResult> AddToCart(int? id)
-        {
-
-            if (!User.Identity.IsAuthenticated)
-            {
-                Response.Redirect("/");
-                return NotFound();
-            }
-
-            var userId = User.Identity.GetUserId();
-
-            var cart = await _context.Cart
-                .FirstOrDefaultAsync(m => m.ID_Customer == userId);
-
-            if (cart == null)
-            {
-                cart = new Cart() { ID_Customer = userId, CreatedTime = DateTime.Now };
-                _context.Cart.Add(cart);
-                _context.SaveChanges();
-            }
-
-            CartItem item = new CartItem();
-
-            item.CreatedTime = DateTime.Now;
-
-            item.ID_Cart = cart.ID;
-
-            var product = await _context.Products
-                .FirstOrDefaultAsync(m => m.ID == id);
-
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            item.Product = product;
-
-            item.ID_Product = product.ID;
-
-            _context.Add(item);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Shop));
-        }
-
-        // GET: Products/Details/5
+        // GET: DeliveryTypes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (!(User.Identity.GetUserId() == "e63830c1-9176-4b57-9946-c91277275e40"))
@@ -93,18 +44,17 @@ namespace TCGShop.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products
+            var deliveryType = await _context.DeliveryType
                 .FirstOrDefaultAsync(m => m.ID == id);
-
-            if (product == null)
+            if (deliveryType == null)
             {
                 return NotFound();
             }
 
-            return View(product);
+            return View(deliveryType);
         }
 
-        // GET: Products/Create
+        // GET: DeliveryTypes/Create
         public IActionResult Create()
         {
             if (!(User.Identity.GetUserId() == "e63830c1-9176-4b57-9946-c91277275e40"))
@@ -115,12 +65,12 @@ namespace TCGShop.Controllers
             return View();
         }
 
-        // POST: Products/Create
+        // POST: DeliveryTypes/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Title,Description,Img,Price,ID_ProductType")] Product product)
+        public async Task<IActionResult> Create([Bind("ID,Type")] DeliveryType deliveryType)
         {
             if (!(User.Identity.GetUserId() == "e63830c1-9176-4b57-9946-c91277275e40"))
             {
@@ -129,14 +79,14 @@ namespace TCGShop.Controllers
 
             if (ModelState.IsValid)
             {
-                _context.Add(product);
+                _context.Add(deliveryType);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(product);
+            return View(deliveryType);
         }
 
-        // GET: Products/Edit/5
+        // GET: DeliveryTypes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (!(User.Identity.GetUserId() == "e63830c1-9176-4b57-9946-c91277275e40"))
@@ -149,27 +99,27 @@ namespace TCGShop.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
+            var deliveryType = await _context.DeliveryType.FindAsync(id);
+            if (deliveryType == null)
             {
                 return NotFound();
             }
-            return View(product);
+            return View(deliveryType);
         }
 
-        // POST: Products/Edit/5
+        // POST: DeliveryTypes/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Title,Description,Img,Price,ID_ProductType")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Type")] DeliveryType deliveryType)
         {
             if (!(User.Identity.GetUserId() == "e63830c1-9176-4b57-9946-c91277275e40"))
             {
                 Response.Redirect("/Home/Permissions");
             }
 
-            if (id != product.ID)
+            if (id != deliveryType.ID)
             {
                 return NotFound();
             }
@@ -178,12 +128,12 @@ namespace TCGShop.Controllers
             {
                 try
                 {
-                    _context.Update(product);
+                    _context.Update(deliveryType);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProductExists(product.ID))
+                    if (!DeliveryTypeExists(deliveryType.ID))
                     {
                         return NotFound();
                     }
@@ -194,10 +144,10 @@ namespace TCGShop.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(product);
+            return View(deliveryType);
         }
 
-        // GET: Products/Delete/5
+        // GET: DeliveryTypes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (!(User.Identity.GetUserId() == "e63830c1-9176-4b57-9946-c91277275e40"))
@@ -210,17 +160,17 @@ namespace TCGShop.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products
+            var deliveryType = await _context.DeliveryType
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (product == null)
+            if (deliveryType == null)
             {
                 return NotFound();
             }
 
-            return View(product);
+            return View(deliveryType);
         }
 
-        // POST: Products/Delete/5
+        // POST: DeliveryTypes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -230,15 +180,15 @@ namespace TCGShop.Controllers
                 Response.Redirect("/Home/Permissions");
             }
 
-            var product = await _context.Products.FindAsync(id);
-            _context.Products.Remove(product);
+            var deliveryType = await _context.DeliveryType.FindAsync(id);
+            _context.DeliveryType.Remove(deliveryType);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ProductExists(int id)
+        private bool DeliveryTypeExists(int id)
         {
-            return _context.Products.Any(e => e.ID == id);
+            return _context.DeliveryType.Any(e => e.ID == id);
         }
     }
 }

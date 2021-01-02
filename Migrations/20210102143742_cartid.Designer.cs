@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TCGShop;
@@ -9,9 +10,10 @@ using TCGShop;
 namespace TCGShop.Migrations
 {
     [DbContext(typeof(EntityContext))]
-    partial class EntityContextModelSnapshot : ModelSnapshot
+    [Migration("20210102143742_cartid")]
+    partial class cartid
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -93,6 +95,9 @@ namespace TCGShop.Migrations
                         .HasColumnType("integer")
                         .UseIdentityByDefaultColumn();
 
+                    b.Property<string>("Adress")
+                        .HasColumnType("text");
+
                     b.Property<int?>("CartID")
                         .HasColumnType("integer");
 
@@ -102,16 +107,13 @@ namespace TCGShop.Migrations
                     b.Property<int?>("DeliveryTypeID")
                         .HasColumnType("integer");
 
-                    b.Property<int>("ID_Cart")
-                        .HasColumnType("integer");
+                    b.Property<string>("FirstName")
+                        .HasColumnType("text");
 
                     b.Property<int>("ID_DeliveryType")
                         .HasColumnType("integer");
 
-                    b.Property<string>("ID_User")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Username")
+                    b.Property<string>("LastName")
                         .HasColumnType("text");
 
                     b.HasKey("ID");

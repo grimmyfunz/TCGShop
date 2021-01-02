@@ -12,6 +12,6 @@ namespace TCGShop.Models
 
         public DateTime CreatedTime { get; set; }
 
-        public int ID_Customer { get; set; }
+        public string ID_Customer { get; set; }
     }
 }

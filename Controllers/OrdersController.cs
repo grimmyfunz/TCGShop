@@ -2,85 +2,37 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TCGShop;
 using TCGShop.Models;
+using Microsoft.AspNet.Identity;
 
 namespace TCGShop.Controllers
 {
-    public class ProductsController : Controller
+    public class OrdersController : Controller
     {
         private readonly EntityContext _context;
 
-        public ProductsController(EntityContext context)
+        public OrdersController(EntityContext context)
         {
             _context = context;
         }
 
-        // GET: Products
+        // GET: Orders
         public async Task<IActionResult> Index()
         {
             if (!(User.Identity.GetUserId() == "e63830c1-9176-4b57-9946-c91277275e40"))
             {
-                Response.Redirect("/Home/Permissions");
+                //Response.Redirect("/Home/Permissions");
+                string id = User.Identity.GetUserId();
+                return View(_context.Order.Where(m => m.ID_User == id));
             }
-
-            return View(await _context.Products.ToListAsync());
+            return View(await _context.Order.ToListAsync());
         }
 
-        public async Task<IActionResult> Shop()
-        {
-            return View(await _context.Products.ToListAsync());
-        }
-
-        public async Task<IActionResult> AddToCart(int? id)
-        {
-
-            if (!User.Identity.IsAuthenticated)
-            {
-                Response.Redirect("/");
-                return NotFound();
-            }
-
-            var userId = User.Identity.GetUserId();
-
-            var cart = await _context.Cart
-                .FirstOrDefaultAsync(m => m.ID_Customer == userId);
-
-            if (cart == null)
-            {
-                cart = new Cart() { ID_Customer = userId, CreatedTime = DateTime.Now };
-                _context.Cart.Add(cart);
-                _context.SaveChanges();
-            }
-
-            CartItem item = new CartItem();
-
-            item.CreatedTime = DateTime.Now;
-
-            item.ID_Cart = cart.ID;
-
-            var product = await _context.Products
-                .FirstOrDefaultAsync(m => m.ID == id);
-
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            item.Product = product;
-
-            item.ID_Product = product.ID;
-
-            _context.Add(item);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Shop));
-        }
-
-        // GET: Products/Details/5
+        // GET: Orders/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (!(User.Identity.GetUserId() == "e63830c1-9176-4b57-9946-c91277275e40"))
@@ -93,18 +45,30 @@ namespace TCGShop.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products
+            var order = await _context.Order
                 .FirstOrDefaultAsync(m => m.ID == id);
-
-            if (product == null)
+            if (order == null)
             {
                 return NotFound();
             }
 
-            return View(product);
+            List<Product> temp = new List<Product>();
+
+            foreach (var item in _context.CartItem.Where(p => p.ID_Cart == order.ID_Cart).ToList())
+            {
+                Product prod = _context.Products
+                    .Where(b => b.ID == item.ID_Product)
+                    .FirstOrDefault();
+
+                temp.Add(prod);
+            }
+
+            ViewData["PIL"] = temp;
+
+            return View(order);
         }
 
-        // GET: Products/Create
+        // GET: Orders/Create
         public IActionResult Create()
         {
             if (!(User.Identity.GetUserId() == "e63830c1-9176-4b57-9946-c91277275e40"))
@@ -115,12 +79,12 @@ namespace TCGShop.Controllers
             return View();
         }
 
-        // POST: Products/Create
+        // POST: Orders/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Title,Description,Img,Price,ID_ProductType")] Product product)
+        public async Task<IActionResult> Create([Bind("ID,CreatedTime,ID_DeliveryType,Username,ID_User")] Order order)
         {
             if (!(User.Identity.GetUserId() == "e63830c1-9176-4b57-9946-c91277275e40"))
             {
@@ -129,14 +93,37 @@ namespace TCGShop.Controllers
 
             if (ModelState.IsValid)
             {
-                _context.Add(product);
+                _context.Add(order);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(product);
+            return View(order);
         }
 
-        // GET: Products/Edit/5
+        public async Task<IActionResult> MakeOrder()
+        {
+            if (!(User.Identity.GetUserId() == "e63830c1-9176-4b57-9946-c91277275e40"))
+            {
+                Response.Redirect("/Home/Permissions");
+            }
+
+            Order order = new Order();
+            order.CreatedTime = DateTime.Now;
+            order.ID_User = User.Identity.GetUserId();
+            order.Username = User.Identity.GetUserName();
+
+            var cart = await _context.Cart
+                .FirstOrDefaultAsync(m => m.ID_Customer == order.ID_User);
+
+            order.Cart = cart;
+            order.ID_Cart = cart.ID;
+            order.Cart.ID_Customer = "Shopping cart is ordered";
+            _context.Add(order);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Orders/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (!(User.Identity.GetUserId() == "e63830c1-9176-4b57-9946-c91277275e40"))
@@ -149,27 +136,27 @@ namespace TCGShop.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
+            var order = await _context.Order.FindAsync(id);
+            if (order == null)
             {
                 return NotFound();
             }
-            return View(product);
+            return View(order);
         }
 
-        // POST: Products/Edit/5
+        // POST: Orders/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Title,Description,Img,Price,ID_ProductType")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,CreatedTime,ID_DeliveryType,Username,ID_User")] Order order)
         {
             if (!(User.Identity.GetUserId() == "e63830c1-9176-4b57-9946-c91277275e40"))
             {
                 Response.Redirect("/Home/Permissions");
             }
 
-            if (id != product.ID)
+            if (id != order.ID)
             {
                 return NotFound();
             }
@@ -178,12 +165,12 @@ namespace TCGShop.Controllers
             {
                 try
                 {
-                    _context.Update(product);
+                    _context.Update(order);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProductExists(product.ID))
+                    if (!OrderExists(order.ID))
                     {
                         return NotFound();
                     }
@@ -194,10 +181,10 @@ namespace TCGShop.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(product);
+            return View(order);
         }
 
-        // GET: Products/Delete/5
+        // GET: Orders/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (!(User.Identity.GetUserId() == "e63830c1-9176-4b57-9946-c91277275e40"))
@@ -210,17 +197,17 @@ namespace TCGShop.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products
+            var order = await _context.Order
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (product == null)
+            if (order == null)
             {
                 return NotFound();
             }
 
-            return View(product);
+            return View(order);
         }
 
-        // POST: Products/Delete/5
+        // POST: Orders/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -230,15 +217,15 @@ namespace TCGShop.Controllers
                 Response.Redirect("/Home/Permissions");
             }
 
-            var product = await _context.Products.FindAsync(id);
-            _context.Products.Remove(product);
+            var order = await _context.Order.FindAsync(id);
+            _context.Order.Remove(order);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ProductExists(int id)
+        private bool OrderExists(int id)
         {
-            return _context.Products.Any(e => e.ID == id);
+            return _context.Order.Any(e => e.ID == id);
         }
     }
 }

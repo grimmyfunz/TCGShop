@@ -1,0 +1,21 @@
+﻿@model IEnumerable<TCGShop.Models.Product>
+
+@{
+    ViewData["Title"] = "Shop";
+}
+
+<h1>Most popular products</h1>
+
+<div class="row mt-5 mb-2">
+    @{
+        foreach (var item in Model)
+        {
+            <div class="col-lg-4">
+                <img class="img-thumbnail" src="@item.Img" alt="@item.Title" />
+                <h2>@item.Title</h2>
+                <p>Price: @item.Price.ToString("c")</p>
+                <p><a class="btn btn-warning" href="AddToCart/@item.ID">Add to cart</a></p>
+            </div>
+        }
+    }
+</div>

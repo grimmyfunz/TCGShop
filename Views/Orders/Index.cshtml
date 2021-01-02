@@ -1,4 +1,4 @@
-﻿@model IEnumerable<TCGShop.Models.Product>
+﻿@model IEnumerable<TCGShop.Models.Order>
 
 @{
     ViewData["Title"] = "Index";
@@ -14,19 +14,16 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Title)
+                @Html.DisplayNameFor(model => model.CreatedTime)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Description)
+                @Html.DisplayNameFor(model => model.ID_DeliveryType)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Img)
+                @Html.DisplayNameFor(model => model.Username)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Price)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProductType)
+                @Html.DisplayNameFor(model => model.ID_User)
             </th>
             <th></th>
         </tr>
@@ -35,19 +32,16 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Title)
+                @Html.DisplayFor(modelItem => item.CreatedTime)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Description)
+                @Html.DisplayFor(modelItem => item.ID_DeliveryType)
             </td>
             <td>
-                <img width="50px" height="50px" src="@Html.DisplayFor(modelItem => item.Img)" alt="Alternate Text" />
+                @Html.DisplayFor(modelItem => item.Username)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ID_ProductType)
+                @Html.DisplayFor(modelItem => item.ID_User)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
