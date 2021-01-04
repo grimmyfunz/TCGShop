@@ -33,7 +33,32 @@ namespace TCGShop.Controllers
 
         public async Task<IActionResult> Shop()
         {
+            ViewBag.Category = "Most popular products";
+            
             return View(await _context.Products.ToListAsync());
+        }
+
+        public IActionResult ShopCategory(int? id)
+        {
+            switch (id)
+            {
+                case 0:
+                    ViewBag.Category = "Other products";
+                    break;
+                case 1:
+                    ViewBag.Category = "Cards";
+                    break;
+                case 2:
+                    ViewBag.Category = "Sealed products";
+                    break;
+                case 3:
+                    ViewBag.Category = "Accesory";
+                    break;
+                default:
+                    return NotFound();
+            }
+
+            return View("Shop",_context.Products.Where(p => p.ID_ProductType == id));
         }
 
         public async Task<IActionResult> AddToCart(int? id)

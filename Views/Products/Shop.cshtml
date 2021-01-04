@@ -4,7 +4,21 @@
     ViewData["Title"] = "Shop";
 }
 
-<h1>Most popular products</h1>
+<h1>@ViewBag.Category</h1>
+<br />
+
+@{
+    if (ViewBag.Category != "Most popular products")
+    {
+        <a href="/Products/Shop"><button type="button" class="btn btn-success">All products</button></a>
+    }
+}
+
+<a href="/Products/ShopCategory/1"><button type="button" class="btn btn-primary">Cards</button></a>
+<a href="/Products/ShopCategory/2"><button type="button" class="btn btn-primary">Sealed products</button></a>
+<a href="/Products/ShopCategory/3"><button type="button" class="btn btn-primary">Accesory</button></a>
+<a href="/Products/ShopCategory/0"><button type="button" class="btn btn-primary">Other products</button></a>
+
 
 <div class="row mt-5 mb-2">
     @{
@@ -14,7 +28,7 @@
                 <img class="img-thumbnail" src="@item.Img" alt="@item.Title" />
                 <h2>@item.Title</h2>
                 <p>Price: @item.Price.ToString("c")</p>
-                <p><a class="btn btn-warning" href="AddToCart/@item.ID">Add to cart</a></p>
+                <p><a class="btn btn-warning" href="/Products/AddToCart/@item.ID">Add to cart</a></p>
             </div>
         }
     }

@@ -27,11 +27,11 @@
 
     <div class="row mt-5 mb-2">
     @{
-        float total = 0;
+        float subtotal = 0;
 
         foreach (Product item in (IEnumerable<Product>)ViewData["PIL"])
         {
-            total += item.Price;
+            subtotal += item.Price;
 
             <div class="col-lg-4">
                 <img class="img-thumbnail" src="@item.Img" alt="@item.Title" />
@@ -39,17 +39,23 @@
                 <p>Price: @item.Price.ToString("c")</p>
             </div>
         }
+
+        float tax = subtotal * 0.21f;
+        float total = subtotal * 1.21f;
+
     }
 </div>
-    <h2>Total price: @total</h2>
+    <h4>Price: @subtotal.ToString("c2");</h4>
+    <h4>Taxes: @tax.ToString("c2");</h4>
+    <h3>Total price: @total.ToString("c2");</h3>
     <p><a class="btn btn-warning" href="/Orders/MakeOrder">Make Order</a></p>
 </div>
 <div>
     @{
         if (ViewBag.IsAdmin)
         {
-            <a asp-action="Edit" asp-route-id="@Model.ID">Edit</a>
-            <a asp-action="Index">Back to List</a>
+            <a asp-action="Edit" asp-route-id="@Model.ID"><button type="button" class="btn btn-secondary">Edit</button></a>
+            <a asp-action="Index"><button type="button" class="btn btn-secondary">Back to list</button></a>
         }
     }
 </div>
