@@ -23,6 +23,11 @@ namespace TCGShop.Controllers
         // GET: Orders
         public async Task<IActionResult> Index()
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                Response.Redirect("/Home/Permissions");
+            }
+
             if (!(User.Identity.GetUserId() == "e63830c1-9176-4b57-9946-c91277275e40"))
             {
                 //Response.Redirect("/Home/Permissions");

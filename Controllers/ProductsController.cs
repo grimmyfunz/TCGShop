@@ -33,6 +33,11 @@ namespace TCGShop.Controllers
 
         public async Task<IActionResult> Shop()
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                Response.Redirect("/Home/Permissions");
+            }
+
             ViewBag.Category = "Most popular products";
             
             return View(await _context.Products.ToListAsync());
@@ -40,6 +45,11 @@ namespace TCGShop.Controllers
 
         public IActionResult ShopCategory(int? id)
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                Response.Redirect("/Home/Permissions");
+            }
+
             switch (id)
             {
                 case 0:
@@ -66,8 +76,7 @@ namespace TCGShop.Controllers
 
             if (!User.Identity.IsAuthenticated)
             {
-                Response.Redirect("/");
-                return NotFound();
+                Response.Redirect("/Home/Permissions");
             }
 
             var userId = User.Identity.GetUserId();

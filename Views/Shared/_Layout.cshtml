@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNet.Identity
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -30,6 +31,23 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Orders" asp-action="Index">My Orders</a>
                         </li>
+                        @{
+                            if (User.Identity.GetUserId() == "e63830c1-9176-4b57-9946-c91277275e40")
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-danger" asp-area="" asp-controller="Carts" asp-action="Index">Carts</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-danger" asp-area="" asp-controller="Products" asp-action="Index">Products</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-danger" asp-area="" asp-controller="ProductTypes" asp-action="Index">Product Types</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-danger" asp-area="" asp-controller="DeliveryTypes" asp-action="Index">Delivery Types</a>
+                                </li>
+                            }
+                        }
                     </ul>
 
                     <partial name="_LoginPartial.cshtml" />
